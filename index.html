@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marquee Cinema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#14151f;--sf:#1d1f2e;--sf2:#262941;--tx:#ece8e1;--mu:#9a9db5;--ac:#f2b84b;--ok:#3fb6a8;--bad:#e5586b;--ln:#33364f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 "Bricolage Grotesque",system-ui,sans-serif}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+header{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:14px 5vw;border-bottom:1px solid var(--ln);position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;flex-wrap:wrap}
+.logo{font-weight:800;font-size:1.3rem;letter-spacing:.02em}.logo i{color:var(--ac);font-style:normal}
+nav{display:flex;gap:6px}nav a{padding:8px 14px;border-radius:8px;color:var(--mu);transition:.2s}nav a:hover,nav a.on{background:var(--sf2);color:var(--tx)}
+main{padding:28px 5vw 60px;max-width:1200px;margin:auto}
+h1{font-size:clamp(2rem,6vw,3.6rem);line-height:1.05;margin:0 0 12px;font-weight:800}h2{margin:28px 0 14px}h3{margin:0}
+.mu{color:var(--mu)}.btn{background:var(--ac);color:#1a1405;border:0;padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;transition:transform .15s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}.btn.g{background:var(--sf2);color:var(--tx)}.btn.d{background:var(--bad);color:#fff}.btn:disabled{opacity:.4;cursor:not-allowed}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center;padding:20px 0 10px}
+.hero .poster{aspect-ratio:3/4;max-height:420px;justify-self:end;width:100%;max-width:320px;transform:rotate(2deg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:20px}
+.card{background:var(--sf);border-radius:12px;overflow:hidden;border:1px solid var(--ln);transition:transform .2s,border-color .2s;display:block}
+.card:hover{transform:translateY(-4px);border-color:var(--ac)}.card .in{padding:12px 14px}
+.poster{position:relative;aspect-ratio:2/3;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;border-radius:12px;overflow:hidden}
+.card .poster{border-radius:0}.poster b{font-size:1.5rem;line-height:1.05;font-weight:800;text-shadow:0 2px 12px #0007}.poster span{font-size:.8rem;opacity:.85}
+.poster:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 22px,#ffffff08 22px 24px)}
+.poster>*{position:relative}.poster svg,.poster img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.poster .sh{position:absolute;inset:auto 0 0 0;height:60%;background:linear-gradient(transparent,#000b)}.thumb{width:38px;aspect-ratio:2/3;padding:0;border-radius:6px}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--sf2);font-size:.8rem;color:var(--mu);margin-right:6px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+input,select,textarea{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:10px 12px;width:100%}
+.bar input,.bar select{width:auto;flex:1;min-width:160px}
+.det{display:grid;grid-template-columns:260px 1fr;gap:32px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:12px 16px;margin-bottom:10px;flex-wrap:wrap}
+.screen{height:8px;background:var(--ac);border-radius:50%/100%;margin:20px auto 30px;max-width:420px;box-shadow:0 10px 40px #f2b84b66}
+.seats{display:grid;gap:8px;justify-content:center;overflow-x:auto;padding-bottom:8px}
+.s{width:36px;height:34px;border-radius:8px 8px 4px 4px;border:0;background:var(--ok);color:#06241f;font-size:.7rem;font-weight:600;cursor:pointer;transition:.15s}
+.s:hover:not(:disabled){transform:translateY(-2px)}.s.sel{background:var(--ac);color:#1a1405}.s:disabled{background:var(--sf2);color:#5b5e7a;cursor:not-allowed}
+.lg{display:flex;gap:18px;justify-content:center;margin:16px 0;font-size:.85rem;color:var(--mu)}.lg i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
+.ticket{display:flex;background:var(--sf);border-radius:14px;margin:0 0 18px;max-width:640px;border:1px solid var(--ln);overflow:hidden}
+.ticket .m{flex:1;padding:20px}.ticket .st{padding:20px;border-left:2px dashed var(--ln);text-align:center;min-width:120px;display:flex;flex-direction:column;justify-content:center}
+.ticket .big{font-size:2.2rem;font-weight:800;color:var(--ac)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px}.stat{background:var(--sf);border:1px solid var(--ln);border-radius:12px;padding:18px}.stat b{font-size:2rem;display:block}
+.tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}.tabs a{padding:8px 16px;border-radius:8px;background:var(--sf)}.tabs a.on{background:var(--ac);color:#1a1405}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:560px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--ln)}th{color:var(--mu);font-weight:600}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;background:var(--sf);padding:18px;border-radius:12px;border:1px solid var(--ln);margin-bottom:24px}.form label{font-size:.85rem;color:var(--mu);display:block}.form .w{grid-column:1/-1}
+.box{max-width:420px;background:var(--sf);padding:24px;border-radius:14px;border:1px solid var(--ln)}.box label{display:block;margin:12px 0 4px;color:var(--mu);font-size:.9rem}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--sf2);border-left:4px solid var(--ok);padding:12px 20px;border-radius:10px;opacity:0;transition:.25s;pointer-events:none;z-index:9;max-width:90vw}
+#toast.show{opacity:1;transform:translate(-50%,0)}#toast.err{border-color:var(--bad)}
+@media(max-width:700px){.hero,.det{grid-template-columns:1fr}.hero .poster{justify-self:start}.ticket{flex-direction:column}.ticket .st{border-left:0;border-top:2px dashed var(--ln)}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header><a href="#home" class="logo">Marquee<i>.</i>Cinema</a><nav id="nav"></nav></header>
+<main id="app"></main><div id="toast" role="status"></div>
+<script>
+/* ---------- Exceptions (mirror the C++ originals) ---------- */
+class CinemaException extends Error{}
+const Ex={
+ Invalid:m=>new CinemaException("Error: "+m),
+ Creds:()=>new CinemaException("Error: Invalid ID or password!"),
+ AdminExists:()=>new CinemaException("Error: Admin ID already exists!"),
+ NotFound:i=>new CinemaException("Error: "+i+" not found!"),
+ Seat:()=>new CinemaException("Error: Selected seat is already reserved!"),
+ Dup:(i,id)=>new CinemaException("Error: "+i+" ID "+id+" already exists!"),
+ Conflict:()=>new CinemaException("Error: This hall already has a showtime overlapping that time slot!"),
+ Age:a=>new CinemaException("Error: This movie is restricted to viewers aged "+a+"+.")};
+const toMin=t=>{if(!/^\d\d:\d\d$/.test(t))throw Ex.Invalid("Time must be in HH:MM format (e.g. 18:30).");const h=+t.slice(0,2),m=+t.slice(3);if(h>23||m>59)throw Ex.Invalid("Time is out of range (00:00 - 23:59).");return h*60+m};
+const checkDate=d=>{const m=/^(\d{4})-(\d\d)-(\d\d)$/.exec(d);if(!m||+m[2]<1||+m[2]>12||+m[3]<1||+m[3]>31)throw Ex.Invalid("Release date must be in YYYY-MM-DD format.")};
+const hashPw=(id,p)=>{let h1=0xdeadbeef,h2=0x41c6ce57;const s="cinema-salt:"+id+":"+p;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}return String((h2>>>0)*4294967296+(h1>>>0))}; // not cryptographically secure (same caveat as original)
+/* ---------- Domain classes ---------- */
+class Movie{constructor(o){Object.assign(this,o)}}
+class MovieHall{static PER_ROW=10;static MAX=260;
+ constructor(o){if(o.capacity<1||o.capacity>MovieHall.MAX)throw Ex.Invalid("Hall capacity must be between 1 and "+MovieHall.MAX+".");Object.assign(this,o)}
+ get seats(){return Array.from({length:this.capacity},(_,i)=>({id:i+1,number:String.fromCharCode(65+Math.floor(i/10))+(i%10+1)}))}
+ seatByNumber(n){const s=this.seats.find(x=>x.number===String(n).toUpperCase());if(!s)throw Ex.NotFound("Seat");return s}}
+class ShowTime{constructor(o){Object.assign(this,o);this.reserved=o.reserved||[]}
+ isReserved(id){return this.reserved.includes(id)}
+ reserve(seat,hall){if(!seat||seat.id>hall.capacity)throw Ex.NotFound("Seat");if(this.isReserved(seat.id))throw Ex.Seat();this.reserved.push(seat.id)}
+ available(hall){return hall.capacity-this.reserved.length}}
+class Ticket{constructor(o){Object.assign(this,o)}}           // ticketId, showId, seatId, hallId
+class BookingDetails{constructor(o){Object.assign(this,o)}}   // bookingId, ticket
+/* ---------- Store with persistence ---------- */
+const KEY="marquee-cinema-v1";
+const db={admins:[],movies:[],halls:[],showtimes:[],bookings:[],ticketCounter:1000,bookingCounter:5000};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}};
+const movie=id=>{const m=db.movies.find(x=>x.id===+id);if(!m)throw Ex.NotFound("Movie");return m};
+const hall=id=>{const h=db.halls.find(x=>x.id===+id);if(!h)throw Ex.NotFound("Movie Hall");return h};
+const show=id=>{const s=db.showtimes.find(x=>x.id===+id);if(!s)throw Ex.NotFound("ShowTime");return s};
+const hallOf=s=>hall(s.hallId);
+/* ---------- Admin (privileged operations) ---------- */
+class Admin{constructor(o){this.id=o.id;this.hash=o.hash}
+ static create(id,pw){if(!(id>0))throw Ex.Invalid("Admin ID must be a positive number.");if(pw.length<6)throw Ex.Invalid("Password must be at least 6 characters.");return new Admin({id,hash:hashPw(id,pw)})}
+ authenticate(id,pw){return this.id===id&&this.hash===hashPw(id,pw)}
+ static checkMovie(f){if(!(f.id>0))throw Ex.Invalid("Movie ID must be positive.");if(!(f.duration>=1&&f.duration<=600))throw Ex.Invalid("Duration must be 1-600 minutes.");checkDate(f.releaseDate);if(!(f.price>=0))throw Ex.Invalid("Price cannot be negative.");if(!(f.ageRating>=0&&f.ageRating<=21))throw Ex.Invalid("Age rating must be between 0 and 21.");if(!f.title||!f.genre||!f.language)throw Ex.Invalid("Title, genre and language cannot be empty.")}
+ addMovie(f){if(db.movies.some(m=>m.id===f.id))throw Ex.Dup("Movie",f.id);Admin.checkMovie(f);f.description=f.description||"No description available.";db.movies.push(new Movie(f));save()}
+ editMovie(id,f){const m=movie(id);f.id=m.id;Admin.checkMovie(f);Object.assign(m,f,{description:f.description||"No description available."});save()}
+ addHall(id,capacity,name){if(db.halls.some(h=>h.id===id))throw Ex.Dup("Movie Hall",id);if(db.halls.some(h=>h.name.toLowerCase()===name.toLowerCase()))throw Ex.Invalid("A hall with that name already exists.");if(!(id>0))throw Ex.Invalid("Hall ID must be positive.");if(!name)throw Ex.Invalid("Hall name cannot be empty.");db.halls.push(new MovieHall({id,capacity,name}));save()}
+ renameHall(id,name){const h=hall(id);if(!name)throw Ex.Invalid("Hall name cannot be empty.");if(db.halls.some(x=>x!==h&&x.name.toLowerCase()===name.toLowerCase()))throw Ex.Invalid("A hall with that name already exists.");h.name=name;save()}
+ addShowTime(id,start,end,movieId,hallId){const m=movie(movieId),h=hall(hallId);if(db.showtimes.some(s=>s.id===id))throw Ex.Dup("Showtime",id);if(!(id>0))throw Ex.Invalid("Showtime ID must be positive.");const s=toMin(start),e=toMin(end);if(e<=s)throw Ex.Invalid("End time must be after start time.");if(e-s<m.duration)throw Ex.Invalid("Showtime is shorter than the movie ("+m.duration+" mins).");
+  for(const o of db.showtimes){if(o.hallId!==h.id)continue;if(s<toMin(o.end)&&toMin(o.start)<e)throw Ex.Conflict()}
+  db.showtimes.push(new ShowTime({id,start,end,movieId:m.id,hallId:h.id}));save()}}
+/* ---------- Customer operations ---------- */
+const searchTitle=q=>db.movies.filter(m=>m.title.toLowerCase().includes(q.toLowerCase()));
+const searchGenre=q=>db.movies.filter(m=>m.genre.toLowerCase().includes(q.toLowerCase()));
+function bookSeats(showId,age,seatNums){const s=show(showId),m=movie(s.movieId),h=hallOf(s);
+ if(age<m.ageRating)throw Ex.Age(m.ageRating);if(s.available(h)===0)throw Ex.Invalid("This showtime is sold out.");
+ if(!seatNums.length)throw Ex.Invalid("Select at least one seat.");
+ const seats=seatNums.map(n=>h.seatByNumber(n));if(seats.some(x=>s.isReserved(x.id)))throw Ex.Seat();
+ return seats.map(seat=>{s.reserve(seat,h);const b=new BookingDetails({bookingId:db.bookingCounter++,ticket:new Ticket({ticketId:db.ticketCounter++,showId:s.id,seatId:seat.id,hallId:h.id})});db.bookings.push(b);return b}).map(b=>(save(),b))}
+/* ---------- Seed data ---------- */
+function seed(){
+ db.admins=[Admin.create(1,"admin123"),Admin.create(2,"manager2026")];
+ [[101,148,"2010-07-16",12.5,13,"Inception","Sci-Fi","English","A thief who steals corporate secrets through dream-sharing is offered a chance to erase his past."],
+ [102,169,"2014-11-07",14,13,"Interstellar","Sci-Fi","English","Explorers travel through a wormhole in search of a new home for humanity."],
+ [103,152,"2008-07-18",12,13,"The Dark Knight","Action","English","Batman faces the Joker, a criminal mastermind who plunges Gotham into chaos."],
+ [104,125,"2001-07-20",9.5,0,"Spirited Away","Animation","Japanese","A girl wanders into a world of spirits and must work to free her parents."],
+ [105,132,"2019-05-30",11.5,17,"Parasite","Thriller","Korean","A poor family schemes its way into the lives of a wealthy household."],
+ [106,175,"1972-03-24",10.5,17,"The Godfather","Crime","English","The aging patriarch of a crime dynasty hands control to his reluctant son."],
+ [107,81,"1995-11-22",8.5,0,"Toy Story","Animation","English","A cowboy doll feels threatened when a new space ranger toy arrives."],
+ [108,120,"2015-05-15",12,17,"Mad Max: Fury Road","Action","English","In a desert wasteland, a drifter and a rebel flee a tyrant across the sands."],
+ [109,122,"2001-04-25",9,13,"Amelie","Romance","French","A shy Parisian waitress secretly improves the lives of those around her."],
+ [110,112,"2013-07-19",11,17,"The Conjuring","Horror","English","Paranormal investigators help a family terrorized by a dark presence."],
+ [111,128,"2016-12-09",11.5,13,"La La Land","Romance","English","A jazz pianist and an aspiring actress chase dreams in Los Angeles."],
+ [112,155,"2021-10-22",13.5,13,"Dune","Sci-Fi","English","A young heir is drawn into a war over the desert planet Arrakis."],
+ [113,105,"2017-11-22",9,0,"Coco","Animation","English","A boy enters the Land of the Dead to uncover his family's musical secrets."],
+ [114,100,"2009-06-05",10.5,17,"The Hangover","Comedy","English","Three friends wake up after a bachelor party with no memory and a missing groom."],
+ [115,106,"2014-10-10",10,17,"Whiplash","Drama","English","A young drummer endures a ruthless instructor in pursuit of greatness."]]
+ .forEach(a=>db.movies.push(new Movie({id:a[0],duration:a[1],releaseDate:a[2],price:a[3],ageRating:a[4],title:a[5],genre:a[6],language:a[7],description:a[8]})));
+ [[1,120,"IMAX Hall"],[2,80,"Standard Hall 1"],[3,80,"Standard Hall 2"],[4,30,"VIP Lounge"],[5,100,"Dolby Atmos Hall"],[6,20,"Mini Screen"]].forEach(a=>db.halls.push(new MovieHall({id:a[0],capacity:a[1],name:a[2]})));
+ const A=new Admin(db.admins[0]);
+ [[1,"18:00","20:30",101,1],[2,"10:00","12:50",102,1],[3,"13:30","16:05",103,1],[4,"21:00","23:35",112,1],[5,"10:00","12:10",104,2],[6,"13:00","14:40",107,2],[7,"15:30","17:45",105,2],[8,"19:00","21:00",108,2],[9,"10:30","12:35",109,3],[10,"13:15","15:25",111,3],[11,"16:30","18:25",110,3],[12,"20:00","21:45",114,3],[13,"17:00","20:00",106,4],[14,"20:30","22:20",115,4],[15,"12:00","13:50",113,4],[16,"11:00","13:45",112,5],[17,"14:30","16:30",108,5],[18,"18:00","20:35",103,5],[19,"10:00","11:45",113,6],[20,"12:30","14:20",115,6]].forEach(a=>A.addShowTime(...a));
+ const B=(id,seats)=>bookSeats(id,99,seats);
+ B(1,["A1","A2","A3","B5","B6"]);B(2,["C1","C2"]);B(4,["E5","E6","E7","E8"]);B(7,["A1","A2","D4"]);B(8,["B1","B2","B3","B4","B5","B6"]);B(13,["A1","A2","A3"]);B(16,["F3","F4"]);B(19,["A1","A2","A3","A4","A5","A6","A7","A8","A9","A10"]);save()}
+function load(){let raw=null;try{raw=localStorage.getItem(KEY)}catch(e){}
+ if(raw){try{const d=JSON.parse(raw);db.admins=d.admins;db.movies=d.movies.map(o=>new Movie(o));db.halls=d.halls.map(o=>new MovieHall(o));db.showtimes=d.showtimes.map(o=>new ShowTime(o));db.bookings=d.bookings.map(o=>new BookingDetails({bookingId:o.bookingId,ticket:new Ticket(o.ticket)}));db.ticketCounter=d.ticketCounter;db.bookingCounter=d.bookingCounter;return}catch(e){}}
+ seed()}
+/* ---------- UI helpers ---------- */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $=i=>document.getElementById(i);const val=i=>$(i).value.trim();const num=i=>val(i)===""?NaN:Number(val(i));
+let tt;const toast=(m,err)=>{const t=$("toast");t.textContent=m;t.className="show"+(err?" err":"");clearTimeout(tt);tt=setTimeout(()=>t.className="",3200)};
+const run=f=>{try{return f()}catch(e){if(e instanceof CinemaException)toast(e.message,true);else{toast("Error: something went wrong.",true);console.error(e)}}};
+const HUE={"Sci-Fi":215,Action:12,Animation:150,Thriller:275,Crime:35,Romance:335,Horror:0,Comedy:50,Drama:190};
+const hue=m=>HUE[m.genre]??(m.genre.length*47)%360;
+const bg=m=>`background:linear-gradient(165deg,hsl(${hue(m)} 55% 38%),hsl(${(hue(m)+40)%360} 45% 14%))`;
+const art=m=>{if(m.image)return `<img src="${m.image}" alt=""><div class="sh"></div>`;
+ const h=hue(m),r=n=>((m.id*9301+n*49297)%233280)/233280,L=`hsl(${h} 70% 75%)`,D=`hsl(${h} 50% 10%)`,x=Math.round(60+r(1)*80),stars=[...Array(16)].map((_,i)=>`<circle cx="${Math.round(r(i+3)*200)}" cy="${Math.round(r(i+30)*170)}" r="1.4" fill="#fff"/>`).join("");
+ const M={"Sci-Fi":`${stars}<circle cx="${x}" cy="100" r="44" fill="${L}"/><ellipse cx="${x}" cy="100" rx="78" ry="13" fill="none" stroke="${D}" stroke-width="5" transform="rotate(-18 ${x} 100)"/>`,
+ Action:`<polygon points="0,30 200,0 200,70 0,125" fill="${L}" opacity=".35"/><polygon points="0,125 200,75 200,115 0,170" fill="${D}" opacity=".5"/><circle cx="${x}" cy="85" r="28" fill="${L}"/>`,
+ Animation:`<circle cx="${x-25}" cy="95" r="40" fill="${L}" opacity=".9"/><circle cx="${x+25}" cy="70" r="32" fill="#fff" opacity=".55"/><circle cx="${x+15}" cy="125" r="22" fill="${D}" opacity=".5"/>`,
+ Thriller:`<ellipse cx="100" cy="95" rx="72" ry="32" fill="${L}"/><circle cx="100" cy="95" r="22" fill="${D}"/><circle cx="108" cy="88" r="6" fill="${L}"/>`,
+ Crime:`<circle cx="${x}" cy="70" r="34" fill="${L}"/>${[0,1,2,3,4,5].map(i=>`<rect x="0" y="${30+i*24}" width="200" height="9" fill="${D}" opacity=".55"/>`).join("")}`,
+ Romance:`<path d="M${x} 135 C${x-72} 85 ${x-40} 28 ${x} 72 C${x+40} 28 ${x+72} 85 ${x} 135Z" fill="${L}"/>`,
+ Horror:`<circle cx="${x}" cy="62" r="34" fill="${L}"/>${[10,55,100,145,185].map((t,i)=>`<polygon points="${t-22},200 ${t},${110+i%2*25} ${t+22},200" fill="${D}"/>`).join("")}`,
+ Comedy:`<circle cx="100" cy="90" r="52" fill="${L}"/><circle cx="82" cy="78" r="7" fill="${D}"/><circle cx="118" cy="78" r="7" fill="${D}"/><path d="M72 102 Q100 134 128 102" stroke="${D}" stroke-width="6" fill="none" stroke-linecap="round"/>`,
+ Drama:`<polygon points="100,0 175,220 25,220" fill="#fff" opacity=".16"/><circle cx="100" cy="150" r="18" fill="${L}"/>`};
+ return `<svg viewBox="0 0 200 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${M[m.genre]||`<circle cx="${x}" cy="95" r="44" fill="${L}"/><circle cx="${x}" cy="95" r="14" fill="${D}"/>`}</svg><div class="sh"></div>`};
+const poster=m=>`<div class="poster" style="${bg(m)}">${art(m)}<span>${esc(m.genre)} · ${m.releaseDate.slice(0,4)}</span><b>${esc(m.title)}</b></div>`;
+const thumb=m=>`<div class="poster thumb" style="${bg(m)}">${art(m)}</div>`;
+const card=m=>`<a class="card" href="#movie-${m.id}">${poster(m)}<div class="in"><b>${esc(m.title)}</b><div class="mu">${esc(m.genre)} · ${m.duration} min</div><span class="tag">${m.ageRating?m.ageRating+"+":"All ages"}</span><span class="tag">$${m.price.toFixed(2)}</span></div></a>`;
+const money=n=>"$"+n.toFixed(2);
+let admin=null,filt={q:"",g:"",mode:"title"},sel=[],bookAge="",last=[],editing=null;
+try{const id=+sessionStorage.getItem("adm");if(id){const a=db.admins.find(x=>x.id===id);if(a)admin=new Admin(a)}}catch(e){}
+/* ---------- Views ---------- */
+function showRow(s,link){const m=movie(s.movieId),h=hallOf(s);return `<div class="row"><div><b>${esc(m.title)}</b><div class="mu">${s.start} – ${s.end} · ${esc(h.name)} · ${s.available(h)}/${h.capacity} seats free</div></div>${link?`<a class="btn" href="#book-${s.id}">${s.available(h)?"Book seats":"Sold out"}</a>`:""}</div>`}
+function vHome(){const f=db.movies[0];return `<section class="hero"><div><h1>Tonight at the Marquee.</h1><p class="mu" style="max-width:46ch">Browse ${db.movies.length} films across ${db.showtimes.length} showtimes, pick your exact seat, and walk in with a ticket.</p><p><a class="btn" href="#movies">Browse movies</a> <a class="btn g" href="#showtimes">See showtimes</a></p></div>${f?poster(f):""}</section><h2>Now showing</h2><div class="grid">${db.movies.slice(0,6).map(card).join("")}</div>`}
+function vMovies(){const gs=[...new Set(db.movies.map(m=>m.genre))].sort();let l=filt.q?(filt.mode==="title"?searchTitle(filt.q):searchGenre(filt.q)):db.movies;if(filt.g)l=l.filter(m=>m.genre===filt.g);
+ return `<h1 style="font-size:2.4rem">Movies</h1><div class="bar"><select id="fm" onchange="filt.mode=this.value;go()"><option value="title" ${filt.mode==="title"?"selected":""}>Search by title</option><option value="genre" ${filt.mode==="genre"?"selected":""}>Search by genre</option></select><input id="fq" placeholder="Type to search…" value="${esc(filt.q)}" aria-label="Search"><select id="fg" onchange="filt.g=this.value;go()"><option value="">All genres</option>${gs.map(g=>`<option ${g===filt.g?"selected":""}>${esc(g)}</option>`).join("")}</select></div>${l.length?`<div class="grid">${l.map(card).join("")}</div>`:`<p class="mu">No movies match. Clear the search or choose another genre.</p>`}`}
+function vShowtimes(){return `<h1 style="font-size:2.4rem">Showtimes</h1>${db.showtimes.length?[...db.showtimes].sort((a,b)=>a.start.localeCompare(b.start)).map(s=>showRow(s,1)).join(""):`<p class="mu">No showtimes are scheduled yet.</p>`}`}
+function vMovie(id){const m=movie(id);const ss=db.showtimes.filter(s=>s.movieId===m.id);
+ return `<div class="det"><div>${poster(m)}</div><div><h1 style="font-size:2.6rem">${esc(m.title)}</h1><p><span class="tag">${esc(m.genre)}</span><span class="tag">${esc(m.language)}</span><span class="tag">${m.duration} min</span><span class="tag">${m.ageRating?m.ageRating+"+":"All ages"}</span></p><p style="max-width:60ch">${esc(m.description)}</p><p class="mu">Released ${m.releaseDate} · Ticket ${money(m.price)} · Movie ID ${m.id}</p><h2>Showtimes</h2>${ss.length?ss.map(s=>showRow(s,1)).join(""):`<p class="mu">No showtimes scheduled for this movie yet.</p>`}</div></div>`}
+function vBook(id){const s=show(id),m=movie(s.movieId),h=hallOf(s);const rows={};h.seats.forEach(x=>(rows[x.number[0]]??=[]).push(x));
+ return `<p><a class="mu" href="#movie-${m.id}">← ${esc(m.title)}</a></p><h1 style="font-size:2.2rem">${esc(m.title)}</h1><p class="mu">${s.start} – ${s.end} · ${esc(h.name)} · ${money(m.price)} per seat${m.ageRating?` · Viewers ${m.ageRating}+`:""}</p><div class="bar"><input id="age" type="number" min="1" max="120" placeholder="Your age" value="${esc(bookAge)}" style="max-width:160px" oninput="bookAge=this.value"></div><div class="screen"></div>
+ <div class="seats">${Object.keys(rows).map(r=>`<div style="display:flex;gap:6px;align-items:center"><span class="mu" style="width:18px">${r}</span>${rows[r].map(x=>{const t=s.isReserved(x.id);return `<button class="s ${sel.includes(x.number)?"sel":""}" ${t?"disabled":""} aria-label="Seat ${x.number}${t?" reserved":""}" onclick="pick('${x.number}')">${x.number}</button>`}).join("")}</div>`).join("")}</div>
+ <div class="lg"><span><i style="background:var(--ok)"></i>Available</span><span><i style="background:var(--ac)"></i>Selected</span><span><i style="background:var(--sf2)"></i>Reserved</span></div>
+ <div class="row"><div><b>${sel.length} seat${sel.length===1?"":"s"} selected</b><div class="mu">${sel.join(", ")||"Choose seats above"} · Total ${money(sel.length*m.price)}</div></div><button class="btn" ${sel.length?"":"disabled"} onclick="confirmBook(${s.id})">Confirm booking</button></div>`}
+function ticketHtml(b){const t=b.ticket,s=show(t.showId),m=movie(s.movieId),h=hall(t.hallId),seat=h.seats.find(x=>x.id===t.seatId);
+ return `<div class="ticket"><div class="m"><div class="mu">Booking #${b.bookingId} · Ticket #${t.ticketId}</div><h3 style="font-size:1.6rem;margin:6px 0">${esc(m.title)}</h3><div>${esc(h.name)}</div><div class="mu">${s.start} to ${s.end}</div><div style="margin-top:8px">Price ${money(m.price)}</div></div><div class="st"><div class="mu">Seat</div><div class="big">${seat.number}</div></div></div>`}
+function vTicket(){return `<h1 style="font-size:2.4rem">Booking confirmed</h1><p class="mu">Your ${last.length>1?"tickets are":"ticket is"} ready.</p>${last.map(ticketHtml).join("")}<a class="btn" href="#movies">Book another film</a> <button class="btn g" onclick="window.print()">Print tickets</button>`}
+/* ---------- Admin views ---------- */
+const T=(h,rows)=>`<div class="tw"><table><thead><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
+function vAdminLogin(m){return `<div class="box"><h1 style="font-size:2rem">Admin portal</h1><div class="tabs"><a href="#admin" class="${m!=="reg"?"on":""}">Sign in</a><a href="#admin-register" class="${m==="reg"?"on":""}">Register</a></div><label for="aid">Admin ID</label><input id="aid" type="number" min="1"><label for="apw">Password${m==="reg"?" (min 6 characters)":""}</label><input id="apw" type="password"><p><button class="btn" onclick="${m==="reg"?"doRegister()":"doLogin()"}">${m==="reg"?"Create admin account":"Sign in"}</button></p></div>`}
+function vAdmin(tab){const tabs=[["admin","Overview"],["admin-movies","Movies"],["admin-halls","Halls"],["admin-showtimes","Showtimes"]];
+ let body="";
+ if(tab==="admin"){const rev=db.bookings.reduce((a,b)=>a+movie(show(b.ticket.showId).movieId).price,0);
+  body=`<div class="stats"><div class="stat"><b>${db.movies.length}</b>Movies</div><div class="stat"><b>${db.halls.length}</b>Halls</div><div class="stat"><b>${db.showtimes.length}</b>Showtimes</div><div class="stat"><b>${db.bookings.length}</b>Tickets sold</div><div class="stat"><b>${money(rev)}</b>Ticket revenue</div></div><h2>Occupancy by showtime</h2>`+T(["Movie","Hall","Time","Booked","Fill"],db.showtimes.map(s=>{const h=hallOf(s),p=Math.round(s.reserved.length/h.capacity*100);return `<tr><td>${esc(movie(s.movieId).title)}</td><td>${esc(h.name)}</td><td>${s.start}–${s.end}</td><td>${s.reserved.length}/${h.capacity}</td><td>${p}%</td></tr>`}))}
+ else if(tab==="admin-movies"){const e=editing?movie(editing):null,v=k=>e?esc(e[k]):"";
+  body=`<h2 style="margin-top:0">${e?"Edit movie #"+e.id:"Add a movie"}</h2><div class="form"><div><label>Movie ID</label><input id="f_id" type="number" value="${v("id")}" ${e?"disabled":""}></div><div><label>Title</label><input id="f_title" value="${v("title")}"></div><div><label>Genre</label><input id="f_genre" value="${v("genre")}"></div><div><label>Language</label><input id="f_lang" value="${v("language")}"></div><div><label>Duration (mins)</label><input id="f_dur" type="number" value="${v("duration")}"></div><div><label>Release date</label><input id="f_date" placeholder="YYYY-MM-DD" value="${v("releaseDate")}"></div><div><label>Price ($)</label><input id="f_price" type="number" step="0.01" value="${v("price")}"></div><div><label>Age rating</label><input id="f_age" type="number" value="${v("ageRating")}"></div><div class="w"><label>Description</label><textarea id="f_desc" rows="3">${v("description")}</textarea></div><div class="w"><label for="f_img">Poster image (optional, any picture — resized and saved in this browser)</label><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">${e?thumb(e):""}<input id="f_img" type="file" accept="image/*" onchange="loadImg(this)" style="flex:1;min-width:200px">${e&&e.image?`<button class="btn g" onclick="pendingImg=null;toast('Custom poster will be removed when you save changes')">Remove custom poster</button>`:""}</div></div><div class="w"><button class="btn" onclick="saveMovie()">${e?"Save changes":"Add movie"}</button> ${e?`<button class="btn g" onclick="editing=null;pendingImg=undefined;go()">Cancel</button>`:""}</div></div><h2>All movies</h2>`+T(["","ID","Title","Genre","Min","Age","Price",""],db.movies.map(m=>`<tr><td>${thumb(m)}</td><td>${m.id}</td><td>${esc(m.title)}</td><td>${esc(m.genre)}</td><td>${m.duration}</td><td>${m.ageRating}+</td><td>${money(m.price)}</td><td><button class="btn g" onclick="editing=${m.id};pendingImg=undefined;go();scrollTo(0,0)">Edit</button></td></tr>`))}
+ else if(tab==="admin-halls"){body=`<h2 style="margin-top:0">Add a hall</h2><div class="form"><div><label>Hall ID</label><input id="h_id" type="number"></div><div><label>Capacity (1–260)</label><input id="h_cap" type="number"></div><div><label>Name</label><input id="h_name"></div><div class="w"><button class="btn" onclick="addHall()">Add hall</button></div></div><h2>All halls</h2>`+T(["ID","Name","Capacity","Rename"],db.halls.map(h=>`<tr><td>${h.id}</td><td>${esc(h.name)}</td><td>${h.capacity}</td><td><input id="rn${h.id}" placeholder="New name" style="width:160px"> <button class="btn g" onclick="renameHall(${h.id})">Rename</button></td></tr>`))}
+ else{body=`<h2 style="margin-top:0">Schedule a showtime</h2><div class="form"><div><label>Showtime ID</label><input id="t_id" type="number"></div><div><label>Movie</label><select id="t_m">${db.movies.map(m=>`<option value="${m.id}">${esc(m.title)} (${m.duration} min)</option>`).join("")}</select></div><div><label>Hall</label><select id="t_h">${db.halls.map(h=>`<option value="${h.id}">${esc(h.name)}</option>`).join("")}</select></div><div><label>Start (HH:MM)</label><input id="t_s" placeholder="18:30"></div><div><label>End (HH:MM)</label><input id="t_e" placeholder="21:00"></div><div class="w"><button class="btn" onclick="addShow()">Schedule showtime</button></div></div><h2>All showtimes</h2>`+T(["ID","Movie","Hall","Time","Free"],db.showtimes.map(s=>{const h=hallOf(s);return `<tr><td>${s.id}</td><td>${esc(movie(s.movieId).title)}</td><td>${esc(h.name)}</td><td>${s.start}–${s.end}</td><td>${s.available(h)}/${h.capacity}</td></tr>`}))}
+ return `<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><h1 style="font-size:2.2rem;margin:0">Dashboard</h1><span class="mu">Admin #${admin.id} <button class="btn g" onclick="logout()">Log out</button></span></div><div class="tabs" style="margin-top:18px">${tabs.map(t=>`<a href="#${t[0]}" class="${t[0]===tab?"on":""}">${t[1]}</a>`).join("")}</div>${body}`}
+/* ---------- Actions ---------- */
+const flash=()=>{};
+let pendingImg;
+function loadImg(inp){const f=inp.files[0];if(!f)return;if(!f.type.startsWith("image/")){toast("Error: choose an image file.",true);inp.value="";return}
+ const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,360/im.width),c=document.createElement("canvas");c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext("2d").drawImage(im,0,0,c.width,c.height);pendingImg=c.toDataURL("image/jpeg",.8);toast("Poster ready. Save the movie to apply it.")};im.onerror=()=>toast("Error: could not read that image.",true);im.src=r.result};r.readAsDataURL(f)}
+function pick(n){sel=sel.includes(n)?sel.filter(x=>x!==n):[...sel,n];go()}
+function confirmBook(id){run(()=>{last=bookSeats(id,Number(bookAge),sel);sel=[];toast("Booking confirmed");location.hash="ticket"})}
+function doLogin(){run(()=>{const id=Number(val("aid")),pw=$("apw").value;const a=db.admins.map(x=>new Admin(x)).find(x=>x.authenticate(id,pw));if(!a)throw Ex.Creds();admin=a;try{sessionStorage.setItem("adm",id)}catch(e){}toast("Login successful. Welcome Admin #"+id);location.hash="admin-movies"===""?"":"admin"})}
+function doRegister(){run(()=>{const id=Number(val("aid")),pw=$("apw").value;if(db.admins.some(a=>a.id===id))throw Ex.AdminExists();db.admins.push(Admin.create(id,pw));save();toast("Admin account created. Please sign in.");location.hash="admin"})}
+function logout(){admin=null;try{sessionStorage.removeItem("adm")}catch(e){}location.hash="home"}
+function saveMovie(){run(()=>{const f={title:val("f_title"),genre:val("f_genre"),language:val("f_lang"),duration:num("f_dur"),releaseDate:val("f_date"),price:num("f_price"),ageRating:num("f_age"),description:val("f_desc")};if(pendingImg!==undefined)f.image=pendingImg||undefined;
+ if(editing){admin.editMovie(editing,f);editing=null;toast("Movie updated successfully")}else{f.id=num("f_id");admin.addMovie(f);toast("Movie added successfully")}pendingImg=undefined;go()})}
+function addHall(){run(()=>{admin.addHall(num("h_id"),num("h_cap"),val("h_name"));toast("Movie hall added successfully");go()})}
+function renameHall(id){run(()=>{admin.renameHall(id,val("rn"+id));toast("Hall renamed successfully");go()})}
+function addShow(){run(()=>{admin.addShowTime(num("t_id"),val("t_s"),val("t_e"),num("t_m"),num("t_h"));toast("Showtime scheduled successfully");go()})}
+/* ---------- Router ---------- */
+function go(){const h=(location.hash||"#home").slice(1);const app=$("app");let html,sec=h.split("-")[0];
+ try{
+  if(h==="home")html=vHome();else if(h==="movies")html=vMovies();else if(h==="showtimes")html=vShowtimes();
+  else if(/^movie-\d+$/.test(h))html=vMovie(h.slice(6));
+  else if(/^book-\d+$/.test(h)){if(!window._b||window._b!==h){sel=[];window._b=h}html=vBook(h.slice(5))}
+  else if(h==="ticket"){html=last.length?vTicket():vHome();sec=last.length?"ticket":"home"}
+  else if(h==="admin-register")html=vAdminLogin("reg");
+  else if(h==="admin"||/^admin-(movies|halls|showtimes)$/.test(h))html=admin?vAdmin(h):vAdminLogin();
+  else html=vHome()
+ }catch(e){html=`<h1>Not found</h1><p class="mu">${esc(e.message)}</p><a class="btn" href="#movies">Back to movies</a>`}
+ const f=document.activeElement&&document.activeElement.id;const pos=f==="fq"?document.activeElement.selectionStart:0;
+ app.innerHTML=html;
+ if(f==="fq"){const q=$("fq");q.focus();q.setSelectionRange(pos,pos)}
+ if(h==="movies"){$("fq").oninput=e=>{filt.q=e.target.value;go()}}
+ $("nav").innerHTML=[["home","Home"],["movies","Movies"],["showtimes","Showtimes"],["admin","Admin"]].map(n=>`<a href="#${n[0]}" class="${sec===n[0]||(n[0]==="home"&&sec==="ticket")?"on":""}">${n[1]}</a>`).join("")}
+addEventListener("hashchange",()=>{go();scrollTo(0,0)});load();go();
+</script></body></html>
